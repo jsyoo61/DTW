@@ -2,7 +2,7 @@
 Fast dtw implementation with matrix operations
 Dynamic Time Warping of two sequences, accelerated with
     matrix operations instead of sequential vector operations
-faster than: dtw, fastdtw package (loops through iterations without matrix operations)
+Faster than: dtw, fastdtw package (loops through iterations without matrix operations)
 
     Parameters
     ----------
