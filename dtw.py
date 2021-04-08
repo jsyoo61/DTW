@@ -74,8 +74,8 @@ def dtw(x, y, dist, warp = 1, w = 'inf'):
 
     # 3] Back-Trace minimum cost path
     i, j = T1-1, T2-1
-    x_path = list()
-    y_path = list()
+    x_path = []
+    y_path = []
     while (j>0 or i>0): # Since T1 < T2, i=0 occurs more. So check j first
         i, j = path_matrix[i,j]
         x_path.append(i)
