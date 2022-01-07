@@ -1,6 +1,9 @@
+import itertools as it
+import multiprocessing
+
 import numpy as np
 
-def dtw(x, y, dist, warp = 1, w = 'inf'):
+def dtw(x, y, dist, warp = 1, w = 'inf', n_workers=0):
     '''Dynamic Time Warping of two sequences, accelerated with
     matrix operations instead of sequential vector operations
 
@@ -26,6 +29,7 @@ def dtw(x, y, dist, warp = 1, w = 'inf'):
         (Not Supported Yet)
     w: window size when computing cost matrix
         (Not Supported Yet)
+    n_workers: number of processes to use when computing distance matrix
 
     Returns
     -------
@@ -53,11 +57,13 @@ def dtw(x, y, dist, warp = 1, w = 'inf'):
     # Scalar sequences
     if x.ndim == 1:
         cost_matrix[:, :] = dist(np.expand_dims(x,-1), np.broadcast_to(y, (T1,T2)))
-        # cost_matrix = (x - y.expand(T1, -1).T).T
     # Vector sequences
     else:
-        for i, vector in enumerate(x):
-            cost_matrix[i] = dist(vector, y)
+        with multiprocessing.Pool(n_workers) as pool:
+            costs = pool.starmap(dist, zip(x, it.repeat(y, len(x))))
+        cost_matrix[:,:] = np.stack(costs, axis=0)
+        # for i, vector in enumerate(x):
+        #     cost_matrix[i] = dist(vector, y)
     # cost_matrix_base = cost_matrix.copy() # To save cost matrix
 
     # 2] Compute accumulated cost path(minimum cost matrix) & minimum cost path (T2 ~ T1+T2-1)
